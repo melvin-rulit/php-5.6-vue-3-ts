@@ -43,6 +43,7 @@ const submitForm = async () => {
 
         if (data.success) {
           clearForm(formFields)
+          message.value = 'Форма успешно отправлена ✅';
       if (data.application_id && data.classifier) {
         store.setFormResult({ application_id: data.application_id, classifier: data.classifier })
       }
@@ -90,7 +91,7 @@ const submitForm = async () => {
       <span v-if="errors.email" class="error">{{ errors.email[0] }}</span>
     </div>
     <button type="submit">Отправить</button>
-    <p>{{ message }}</p>
+          <p v-if="message" class="status">{{ message }}</p>
   </form>
 </template>
 

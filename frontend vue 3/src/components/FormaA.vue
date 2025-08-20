@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import type { Ref } from 'vue';
 import { useFormsStore } from '@/stores/applicationStore'
 
 const store = useFormsStore()
@@ -7,7 +8,12 @@ const name = ref('');
 const email = ref('');
 const inn = ref('');
 const message = ref('');
-const errors = ref<{ [key: string]: string[] }>({}); // хранение ошибок
+const errors = ref<{ [key: string]: string[] }>({});
+const formFields = { name, email, inn}
+
+const clearForm = (fields: Record<string, Ref<any>>) => {
+  Object.values(fields).forEach(field => field.value = '')
+}
 
 const submitForm = async () => {
   const payload = { name: name.value, email: email.value, inn: inn.value };
@@ -25,10 +31,8 @@ const submitForm = async () => {
     const data = await res.json();
 
     if (data.success) {
-      name.value = '';
-      email.value = '';
-      inn.value = '';
-      message.value = 'Отправлено!';
+    clearForm(formFields)
+     message.value = 'Форма успешно отправлена ✅';
 
       if (data.application_id && data.classifier) {
         store.setFormResult({ application_id: data.application_id, classifier: data.classifier })
@@ -71,6 +75,7 @@ const submitForm = async () => {
     </div>
 
     <button type="submit">Отправить</button>
+       <p v-if="message" class="status">{{ message }}</p>
   
   </form>
 </template>
